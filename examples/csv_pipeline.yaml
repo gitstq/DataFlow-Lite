@@ -1,0 +1,63 @@
+# Example: CSV Data Processing Pipeline
+# CSV数据处理管线示例
+
+name: csv_processor
+description: Process CSV files with filtering and transformation
+version: "1.0.0"
+
+settings:
+  change_detection: hash
+
+steps:
+  # Read CSV file
+  # 读取CSV文件
+  - name: read_csv
+    type: source
+    source: csv
+    path: ./examples/data.csv
+    has_header: true
+
+  # Filter active records
+  # 过滤活跃记录
+  - name: filter_active
+    type: transform
+    operation: filter
+    field: status
+    operator: equals
+    value: active
+
+  # Transform fields
+  # 转换字段
+  - name: transform_fields
+    type: transform
+    operation: map
+    mappings:
+      name_upper:
+        from: name
+        operation: upper
+      email_lower:
+        from: email
+        operation: lower
+
+  # Sort by name
+  # 按名称排序
+  - name: sort_results
+    type: transform
+    operation: sort
+    field: name_upper
+    reverse: false
+
+  # Export to JSON
+  # 导出为JSON
+  - name: export_json
+    type: sink
+    sink: json
+    path: ./output/result.json
+    indent: 2
+
+  # Export to CSV
+  # 导出为CSV
+  - name: export_csv
+    type: sink
+    sink: csv
+    path: ./output/result.csv

@@ -1,0 +1,46 @@
+# Example: Directory Scan & Statistics Pipeline
+# 目录扫描与统计管线示例
+
+name: dir_stats
+description: Scan a directory and generate file statistics
+version: "1.0.0"
+
+settings:
+  change_detection: mtime
+
+steps:
+  # Scan directory recursively
+  # 递归扫描目录
+  - name: scan_src
+    type: source
+    source: directory
+    path: ./src
+    recursive: true
+    exclude:
+      - __pycache__
+      - "*.pyc"
+
+  # Aggregate by extension
+  # 按扩展名聚合统计
+  - name: aggregate_by_ext
+    type: transform
+    operation: aggregate
+    group_by: extension
+    operations:
+      - field: size
+        operation: sum
+        as: total_size
+      - field: size
+        operation: avg
+        as: avg_size
+      - field: filename
+        operation: count
+        as: file_count
+
+  # Export statistics
+  # 导出统计结果
+  - name: export_stats
+    type: sink
+    sink: json
+    path: ./output/dir_stats.json
+    indent: 2

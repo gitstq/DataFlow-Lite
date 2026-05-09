@@ -1,0 +1,6 @@
+name,status,email,age
+Alice,active,alice@example.com,30
+Bob,inactive,bob@example.com,25
+Charlie,active,charlie@example.com,35
+Diana,active,diana@example.com,28
+Eve,inactive,eve@example.com,32
